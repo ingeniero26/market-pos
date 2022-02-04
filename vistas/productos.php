@@ -481,17 +481,7 @@ document.getElementById("btnGuardarProducto").addEventListener("click", function
     var valitation = Array.prototype.filter.call(forms,function(form){
         if(form.checkValidity()===true) {
            console.log("guardar");
-        }else {
-          console.log("no se puede");
-        }
-        form.classList.add('was-validated');
-    });
-});
-
-
-
- function formSubmitClick(){
-   /* Swal.fire({
+            Swal.fire({
         title:'Está seguro de registrar el Producto',
         icon:'warning',
         showCancelButton:true,
@@ -548,7 +538,21 @@ document.getElementById("btnGuardarProducto").addEventListener("click", function
                 }
             });
         }
-    });/*/
+    });
+        }else {
+          console.log("no se puede");
+        }
+        form.classList.add('was-validated');
+    });
+});
 
- }
+
+
+document.getElementById("btnCancelarRegistro").addEventListener("click",function(){
+    $(".needs-validation").removeClass("was-validated");
+})
+
+
+
+
  </script>
