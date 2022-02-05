@@ -21,4 +21,9 @@ class ProductosControlador{
 
         return $registroProducto;
     }
+
+    static public function ctrActualizarStock($table,$data,$id,$nameId) {
+        $respuesta = ProductosModelo::mdlActualizarStock($table,$data,$id,$nameId);
+        return $respuesta;
+    }
 }

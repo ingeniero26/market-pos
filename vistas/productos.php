@@ -127,6 +127,55 @@
  </div>
  <!-- /.content -->
 
+ <!--aumentar stock -->
+ <div class="modal fade" id="mdlGestionarStock" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-gray py-2">
+                <h6 class="modal-title" id="titulo_modal_stock">Adicionar Stock</h6>
+                <button type="button" class="btn-close text-white fs-6" data-bs-dismiss="modal" id="btnCerrarModalStock" >
+                    
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <label for="" class="form-label text-primary d-block">Código: <span id="stock_codigoProducto" class="text-secondary"></span>
+                        </label>
+                        <label for="" class="form-label text-primary d-block">Producto: <span id="stock_Producto" class="text-secondary"></span>
+                        </label>
+                        <label for="" class="form-label text-primary d-block">Stock: <span id="stock_Stock" class="text-secondary"></span>
+                        </label>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group mb-2">
+                            <label  class="" for="iptStockSumar">
+                                <i class="fas fa-plus-circle fs-6"></i><span class="small" id="titulo_modal_label">Agregar al stock</span>
+                            </label>
+                            <input type="number" min="0" class="form-control form-control-sm" id="iptStockSumar" placeholder="Ingrese la cantidad a agregar al stock">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="" class="form-label text-danger"> Nuevo Stock: <span id="stock_NuevoStock" class="text-secunday"></span>
+                        </label>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger mt-3 mx-2" style="width: 170px;" data-bs-dismiss="modal" id="btnCancelarRegistroStock"> Cancelar                        
+                    </button>
+
+                     <button type="button" class="btn btn-primary mt-3 mx-2" style="width: 170px;"  id="btnGuardarRegistroStock" >Guardar Registro                        
+                    </button>
+            </div>
+             
+
+        </div>
+    </div>
+     
+ </div>
+
  <div class="modal fade" id="mdlGestionarProducto" role="dialog">
      <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -241,6 +290,9 @@
 
  <script>
     var accion;
+      var table;
+      var operacion_stock =0; // sumar o restar 1 suma 2 reta
+
     var Toast = Swal.mixin({
         toas:true,
         position:'top',
@@ -254,7 +306,7 @@
 
 $(document).ready(function() {
 
-    var table;
+  
   
 
     $.ajax({
@@ -462,6 +514,129 @@ $.ajax({
       $("#iptPrecioCompraReg, #iptPrecioVentaReg").change(function(){
         calcularUtilidad();
     });
+
+
+      /*aumentar stock*/
+
+      $('#tbl_productos tbody').on('click','.btnAumentarStock',function() {
+        operacion_stock = 1;
+        $("#mdlGestionarStock").modal('show');
+        $("#titulo_modal_stock").html('Aumentar Stock');
+         $("#titulo_modal_label").html('Aumentar al Stock');
+         $("#iptStockSumar").attr("placeholder","Ingrese la cantidad para agregar el stock");
+
+         var data = table.row($(this).parents('tr')).data();
+         $("#stock_codigoProducto").html(data[2]);
+         $("#stock_Producto").html(data[5]);
+         $("#stock_Stock").html(data[9]);
+
+         $("#stock_NuevoStock").html(parseFloat($("#stock_Stock").html()));
+      });
+
+
+
+       /*aumentar stock*/
+
+      $('#tbl_productos tbody').on('click','.btnDisminuirStock',function() {
+        operacion_stock = 2;
+        $("#mdlGestionarStock").modal('show');
+        $("#titulo_modal_stock").html('Disminuir Stock');
+         $("#titulo_modal_label").html('Disminuir al Stock');
+         $("#iptStockSumar").attr("placeholder","Ingrese la cantidad para Disminuir el stock");
+
+         var data = table.row($(this).parents('tr')).data();
+         $("#stock_codigoProducto").html(data[2]);
+         $("#stock_Producto").html(data[5]);
+         $("#stock_Stock").html(data[9]);
+
+         $("#stock_NuevoStock").html(parseFloat($("#stock_Stock").html()));
+      });
+
+
+
+
+
+      /*limpiar el input de ingreso al cerrar la ventana modal*/
+      $("#btnCancelarRegistroStock, #btnCerrarModalStock").on('click',function(){
+        $("#iptStockSumar").val("");
+      })
+
+      $("#iptStockSumar").keyup(function(){
+        if(operacion_stock == 1 ) {
+            if($("#iptStockSumar").val() != "" && $("#iptStockSumar").val()>0) {
+                var stockActual = parseFloat($("#stock_Stock").html());
+                 var cantidadAgregar = parseFloat($("#iptStockSumar").val());
+                 $("#stock_NuevoStock").html(stockActual +cantidadAgregar);
+            } else {
+                Toast.fire({
+                    icon:'warning',
+                    title:'Ingrese un valor mayor a 0'
+                });
+                $("#iptStockSumar").val("");
+                $("#stock_NuevoStock").html(parseFloat($("#stock_Stock").html()));
+            }
+        } else {
+             if($("#iptStockSumar").val() != "" && $("#iptStockSumar").val()>0) {
+                 var stockActual = parseFloat($("#stock_Stock").html());
+                 var cantidadAgregar = parseFloat($("#iptStockSumar").val());
+                 $("#stock_NuevoStock").html(stockActual - cantidadAgregar);
+                 if(parseInt($("#stock_NuevoStock").html())<0) {
+                    Toast.fire({
+                    icon:'warning',
+                    title:'la cantidad a disminir no puede ser mayor al stock actual (nuevo stock <0)'
+                });
+                     $("#iptStockSumar").val("");
+                      $("#iptStockSumar").focus();
+                        $("#stock_NuevoStock").html(parseFloat($("#stock_Stock").html()));
+                 }
+             } else {
+                Toast.fire({
+                    icon:'warning',
+                    title:'Ingrese un valor mayor a 0'
+                });
+             }
+        }
+      })
+      /*registro de aumento o disminuir stock*/
+      $("#btnGuardarRegistroStock").on('click',function(){
+         if($("#iptStockSumar").val() != "" && $("#iptStockSumar").val()>0) {
+            var nuevoStock = parseFloat($("#stock_NuevoStock").html()),
+             codigo_producto = $("#stock_codigoProducto").html();
+
+             var datos = new FormData();
+             datos.append('accion',3);
+             datos.append('nuevoStock',nuevoStock);
+             datos.append('codigo_producto',codigo_producto);
+
+             $.ajax({
+                url:'ajax/productos.ajax.php',
+                method:'POST',
+                data:datos,
+                processData:false,
+                contentType:false,
+                dataType:'json',
+                success:function(respuesta) {
+                    $("#stock_NuevoStock").html();
+                    $("#iptStockSumar").val("");
+                    $("#mdlGestionarStock").modal('hide');
+                    table.ajax.reload();
+                    Swal.fire({
+                        position:'center',
+                        icon:'success',
+                        title:respuesta,
+                        showConfirm:false,
+                        timer:250
+                    })
+                }
+             });
+
+         } else {
+             Toast.fire({
+                    icon:'error',
+                    title:'El stock no se agrego'
+                });
+         }
+      })
 
 
 })
