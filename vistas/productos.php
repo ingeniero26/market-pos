@@ -109,6 +109,8 @@
                              <th>Producto</th>
                              <th>P. Compra</th>
                              <th>P. Venta</th>
+                             <th>P.Mayor</th>
+                             <th>P.Dcto</th>
                              <th>Utilidad</th>
                              <th>Stock</th>
                              <th>Min. Stock</th>
@@ -638,6 +640,79 @@ $.ajax({
          }
       })
 
+/*editar producto*/
+
+      $('#tbl_productos tbody').on('click','.btnEditarProducto', function(){
+        accion =4;
+        $("#mdlGestionarProducto").modal('show');
+        var data = table.row($(this).parents('tr')).data();
+        $("#iptCodigoReg").val(data[2]);
+        $("#selCategoriaReg").val(data[3]);
+        $("#iptDescripcionReg").val(data[5]);
+        $("#iptPrecioCompraReg").val(data[6]);
+        $("#iptPrecioVentaReg").val(data[7]);
+        $("#iptUtilidadReg").val(data[8]);
+        $("#iptStockReg").val(data[9].replace(' Und(s)','').replace(' Kg(s)',''));
+        $("#iptStockMinimoReg").val(data[10].replace(' Und(s)','').replace(' Kg(s)',''));
+
+
+      })
+
+      /*eliminar producto*/
+         $('#tbl_productos tbody').on('click','.btnEliminarProducto', function(){
+
+        accion =5;
+         
+        var data = table.row($(this).parents('tr')).data();
+
+        var codigo_producto = data["codigo_producto"];
+
+         Swal.fire({
+        title:'Está seguro de eliminar el Producto',
+        icon:'warning',
+        showCancelButton:true,
+        confirmButtonColor:'#3085d6',
+        cancelButtonColor:'#d33',
+        confirmButtonText:'si, deseo eliminar',
+        cancelButtonText:'Cancelar',
+    }).then((result)=>{
+        if(result.isConfirmed) {
+            var datos = new FormData();
+
+            datos.append("accion",accion);
+          
+            datos.append("codigo_producto",codigo_producto);
+           
+            $.ajax({
+                url:'ajax/productos.ajax.php',
+                method:'POST',
+                data:datos,
+                cache:false,
+                contentType:false,
+                processData:false,
+                dataType:'json',
+                success: function(respuesta) {
+                    if(respuesta=='ok') {
+                        Toast.fire({
+                            icon:'success',
+                            title:'el Producto se elimino exitosamente'
+                        });
+                        table.ajax.reload();
+                        
+                    } else {
+                        Toast.fire({
+                            icon:'error',
+                            title:'Producto no eliminado '
+                        });
+                    }
+                }
+            });
+        }
+    });
+
+    }
+
+)
 
 })
 
@@ -674,11 +749,22 @@ document.getElementById("btnGuardarProducto").addEventListener("click", function
             datos.append("id_categoria_producto",$("#selCategoriaReg").val());
             datos.append("descripcion_producto",$("#iptDescripcionReg").val());
             datos.append("precio_compra_producto",$("#iptPrecioCompraReg").val());
-            datos.append("precio_venta_producto",$("#iptPrecioVentaDesde").val());
+            datos.append("precio_venta_producto",$("#iptPrecioVentaReg").val());
             datos.append("utilidad",$("#iptUtilidadReg").val());
             datos.append("stock_producto",$("#iptStockReg").val());
             datos.append("minimo_stock_producto",$("#iptStockMinimoReg").val());
             datos.append("ventas_producto",0);
+
+            if(accion == 2) {
+                var titulo_msj ="Producto Agregado con exito";
+            }
+
+             if(accion == 4) {
+                var titulo_msj ="Producto Actualizado con exito";
+            }
+
+
+
             $.ajax({
                 url:'ajax/productos.ajax.php',
                 method:'POST',
@@ -691,7 +777,7 @@ document.getElementById("btnGuardarProducto").addEventListener("click", function
                     if(respuesta=='ok') {
                         Toast.fire({
                             icon:'success',
-                            title:'ep Producto se registro exitosamente'
+                            title:'el Producto se registro exitosamente'
                         });
                         table.ajax.reload();
                         $("#mdlGestionarProducto").modal('hide');
@@ -700,14 +786,14 @@ document.getElementById("btnGuardarProducto").addEventListener("click", function
                         $("#selCategoriaReg").val(0);
                         $("#iptDescripcionReg").val("");
                         $("#iptPrecioCompraReg").val("");
-                        $("#iptPrecioVentaDesde").val("");
+                        $("#iptPrecioVentaReg").val("");
                         $("#iptUtilidadReg").val("");
                         $("#iptStockReg").val("");
                         $("#iptStockMinimoReg").val("");
                     } else {
                         Toast.fire({
                             icon:'error',
-                            title:'El producto no se pudo agregar'
+                            title:titulo_msj
                         });
                     }
                 }
