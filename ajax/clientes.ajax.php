@@ -1,7 +1,7 @@
 <?php 
-require_once "../controladores/categorias.controlador.php";
-require_once "../modelos/categorias.modelo.php";
-class AjaxCategorias {
+require_once "../controladores/clientes.controlador.php";
+require_once "../modelos/clientes.modelo.php";
+class AjaxClientes {
 	public $id;
 	public $categoria;
 	public $peso;
@@ -9,9 +9,9 @@ class AjaxCategorias {
 	public $fecha;
 
 
-	public function ajaxListarCategorias(){
-		$categorias = CategoriasControlador::ctrListarCategorias();
-		echo json_encode($categorias, JSON_UNESCAPED_UNICODE);
+	public function ajaxListarClientes(){
+		$clientes = ClientesControlador::ctrListarClientes();
+		echo json_encode($clientes, JSON_UNESCAPED_UNICODE);
 	}
 	public function registrarCategorias(){
 		
@@ -39,8 +39,8 @@ class AjaxCategorias {
 
 
 if(!isset($_POST['accion'])) {
-	$categorias = new AjaxCategorias();
-	$categorias ->ajaxListarCategorias();
+	$clientes = new AjaxClientes();
+	$clientes ->ajaxListarClientes();
 } else {
 	if($_POST["accion"] == "registrar"){
 		$insertar = new ajaxCategorias();
