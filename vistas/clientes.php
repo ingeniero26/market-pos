@@ -71,7 +71,7 @@
             =MODAL HEADER
             ===============================================================-->
             <div class="modal-header bg-info">
-                <h4 class="modal-title">Gestionar Categoría</h4>
+                <h4 class="modal-title">Gestionar Cliente</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -84,18 +84,61 @@
                <div class="row">
                    <div class="col-sm-4">
                         <div class="form-group">
-                            <input type="hidden" id ="idCategoria" name ="categoria" value ="">
-                            <label for="txtCategoria">Categoría</label>
-                            <input type="text" class="form-control" name="categoria" id="txtCategoria" placeholder="Ingrese la categoría">
+                            <input type="hidden" id ="idCliente" name ="cliente" value ="">
+                            <label for="txtCategoria">Nombre</label>
+                            <input type="text" class="form-control" name="cliente" id="txtNombre" placeholder="Ingrese Nombre">
+                        </div>
+                   </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                           
+                            <label for="txtApellido">Apellido Paterno</label>
+                            <input type="text" class="form-control" name="cliente" id="txtApellido1" placeholder="Apellido Paterno">
+                        </div>
+                   </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                           
+                            <label for="txtApellido2">Apellido Materno</label>
+                            <input type="text" class="form-control" name="cliente" id="txtApellido2" placeholder="Apellido Materno">
                         </div>
                    </div>
                    <div class="col-sm-4">
                         <div class="form-group">
-                            <label for="txtPesos">Aplica Peso</label>
-                            <select name="estado" id="ddlPeso" class="form-control select2bs4">
-                                <option value="1">Si</option>
-                                <option value="0">No</option>
+                            <label for="txtPesos">Tipo Documento</label>
+                            <select name="estado" id="ddlDocumento" class="form-control select2bs4">
+                                <option value="CEDULA">CEDULA</option>
+                                <option value="PASAPORTE">PASAPORTE</option>
+                                <option value="NIT">NIT</option>
                             </select>
+                        </div>
+                   </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                           
+                            <label for="txtDocumento">Documento</label>
+                            <input type="text" class="form-control" name="documento" id="txtDocumento" placeholder="No documento">
+                        </div>
+                   </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                           
+                            <label for="txtDir">Direccion</label>
+                            <input type="text" class="form-control" name="direccion" id="txtDir" placeholder="direccion">
+                        </div>
+                   </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                           
+                            <label for="txtTeléfono">Teléfono</label>
+                            <input type="number" class="form-control" name="telefono" id="txtTelefono" placeholder="No telefono">
+                        </div>
+                   </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                           
+                            <label for="txtTCorreo">Correo</label>
+                            <input type="email" class="form-control" name="correo" id="txtCorreo" placeholder="Email">
                         </div>
                    </div>
                    <div class="col-sm-4">
@@ -369,7 +412,7 @@
             },
         });
 
-        $(".btn-agregar-categoria").on('click',function(){
+        $(".btn-agregar-cliente").on('click',function(){
             accion = "registrar";
         });
 
@@ -440,26 +483,46 @@
 
         // GUARDAR LA INFORMACION DE CATEGORIA DESDE LA VENTANA MODAL
         $("#btnGuardar").on('click',function(){
+           
 
-            var id = $("#idCategoria").val(),
-                categoria = $("#txtCategoria").val(),
-                peso = $("#ddlPeso").val(),
+
+            var id = $("#idCliente").val(),
+                nombre = $("#txtNombre").val(),
+                apellido1 = $("#txtApellido1").val(),
+                apellido2 = $("#txtApellido2").val(),
+                tipo_doc = $("#ddlDocumento").val(),
+                 documento = $("#txtDocumento").val(),
+                 direccion = $("#txtDir").val(),
+                 telefono = $("#txtTelefono").val(),
+                 correo = $("#txtCorreo").val(),
+
+
+
                 estado = $("#ddlEstado").val(),
+                
+
                 fecha = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
             
             var datos = new FormData();
 
             datos.append('id',id)
-            datos.append('categoria',categoria)
-            datos.append('peso',peso);
-            datos.append('fecha',fecha);
+            datos.append('nombre',nombre)
+            datos.append('apellido1',apellido1)
+            datos.append('apellido2',apellido2)
+            datos.append('tipo_doc',tipo_doc)
+            datos.append('documento',documento)
+            datos.append('direccion',direccion)
+            datos.append('telefono',telefono)
+            datos.append('correo',correo)
             datos.append('estado',estado);
+            datos.append('fecha',fecha);
+            
             
             datos.append('accion',accion);
 
             swal.fire({
                 title: "¡CONFIRMAR!",
-                text: "¿Está seguro que desea registrar la categoría?",
+                text: "¿Está seguro que desea registrar el cliente?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: "Si, deseo registrar",
@@ -472,7 +535,7 @@
                     
 
                     $.ajax({
-                        url: "ajax/categorias.ajax.php",
+                        url: "ajax/clientes.ajax.php",
                         method: "POST",
                         data: datos,
                         cache: false,
@@ -481,7 +544,7 @@
                         success: function(respuesta){
                             console.log(respuesta);
 
-                            $("#modal-gestionar-categoria").modal('hide');
+                            $("#modal-gestionar-cliente").modal('hide');
                             
                             table.ajax.reload(null,false);
 
